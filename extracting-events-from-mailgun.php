@@ -10,6 +10,7 @@ class Mailgun_Event_Extractor
     private $event = '';
 
     private $item_count = 0;
+    private $page_count = 0;
 
     private $addresses = [];
     private $duplicates = [];
@@ -44,6 +45,7 @@ class Mailgun_Event_Extractor
 
     private function request($url)
     {
+        $this->page_count++;
         $response_json = file_get_contents($url, false, $this->auth_context);
         $response = json_decode($response_json);
         $items = $response->items;
@@ -54,6 +56,10 @@ class Mailgun_Event_Extractor
             
             $this->item_count = $this->item_count+count($items);
             $next_page = $response->paging->next;
+
+            // Show progress
+            $this->show_progress();
+
             $this->request($next_page);
         } else {
             $this->report();
@@ -90,6 +96,13 @@ class Mailgun_Event_Extractor
 
         error_log(print_r($duplicates_insight, true));
 
+    }
+
+    private function show_progress()
+    {
+        error_log("Processing page {$this->page_count}");
+        error_log("Amount of items processed: {$this->item_count}");
+        error_log("Duplicates count: " . count($this->duplicates));
     }
 }
 
