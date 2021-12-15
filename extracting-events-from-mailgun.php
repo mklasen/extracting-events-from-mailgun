@@ -11,6 +11,9 @@ class Mailgun_Event_Extractor
 
     private $item_count = 0;
 
+    private $addresses = [];
+    private $duplicates = [];
+
     public function __construct()
     {
         $this->init();
@@ -45,14 +48,16 @@ class Mailgun_Event_Extractor
         $response = json_decode($response_json);
         $items = $response->items;
 
-        error_log('Got response, ' . count($items) . ' items');
-        error_log('Last item from request: ' . $items[0]->id);
-
         if (!empty($items)) {
+
+            $this->process_items($items);
+            
             $this->item_count = $this->item_count+count($items);
             $next_page = $response->paging->next;
             if($this->item_count < 500) {
                 $this->request($next_page);
+            } else {
+                $this->report();
             }
         }
 
@@ -61,6 +66,23 @@ class Mailgun_Event_Extractor
     private function start()
     {
         $this->request("https://{$this->api_url}/v3/{$this->domain}/events?subject={$this->subject}&event={$this->event}");
+    }
+
+    private function process_items($items)
+    {
+        foreach ($items as $item) {
+            if (!in_array($item->recipient, $this->addresses, true)) {
+                $this->addresses[] = $item->recipient;
+            } else {
+                $this->duplicates[] = $item->recipient;
+            }
+        }
+    }
+
+    private function report()
+    {
+        error_log('Addresses: ' . count($this->addresses));
+        error_log('Duplicates: ' . count($this->duplicates));
     }
 }
 
