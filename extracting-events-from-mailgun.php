@@ -54,11 +54,9 @@ class Mailgun_Event_Extractor
             
             $this->item_count = $this->item_count+count($items);
             $next_page = $response->paging->next;
-            if($this->item_count < 500) {
-                $this->request($next_page);
-            } else {
-                $this->report();
-            }
+            $this->request($next_page);
+        } else {
+            $this->report();
         }
 
     }
