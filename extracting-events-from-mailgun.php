@@ -12,16 +12,7 @@ class Mailgun_Event_Extractor
     private $item_count = 0;
 
     private $addresses = [];
-    private $duplicates = [
-    'test@test.test',
-    'test@test.test',
-    'test@test.test',
-    'test@test.test',
-    'test@test.test',
-    'test2@test.test',
-    'test2@test.test',
-    'test1@test.test',
-    ];
+    private $duplicates = [];
 
     public function __construct()
     {
