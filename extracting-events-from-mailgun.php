@@ -44,9 +44,14 @@ class Mailgun_Event_Extractor
         $response = json_decode($response_json);
 
         $items = $response->items;
-        $next_page = $response->paging->next;    
 
-        var_dump($response);
+        if (!empty($items)) {
+            var_dump('items is not empty, item count: ' . count($items));
+        }
+
+        // $next_page = $response->paging->next;
+
+        // var_dump($response);
     }
 
     private function start()
