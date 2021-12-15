@@ -9,6 +9,8 @@ class Mailgun_Event_Extractor
     private $domain = '';
     private $event = '';
 
+    private $item_count = 0;
+
     public function __construct()
     {
         $this->init();
@@ -40,18 +42,20 @@ class Mailgun_Event_Extractor
     private function request($url)
     {
         $response_json = file_get_contents($url, false, $this->auth_context);
-
         $response = json_decode($response_json);
-
         $items = $response->items;
 
+        error_log('Got response, ' . count($items) . ' items');
+        error_log('Last item from request: ' . $items[0]->id);
+
         if (!empty($items)) {
-            var_dump('items is not empty, item count: ' . count($items));
+            $this->item_count = $this->item_count+count($items);
+            $next_page = $response->paging->next;
+            if($this->item_count < 500) {
+                $this->request($next_page);
+            }
         }
 
-        // $next_page = $response->paging->next;
-
-        // var_dump($response);
     }
 
     private function start()
