@@ -12,7 +12,16 @@ class Mailgun_Event_Extractor
     private $item_count = 0;
 
     private $addresses = [];
-    private $duplicates = [];
+    private $duplicates = [
+    'test@test.test',
+    'test@test.test',
+    'test@test.test',
+    'test@test.test',
+    'test@test.test',
+    'test2@test.test',
+    'test2@test.test',
+    'test1@test.test',
+    ];
 
     public function __construct()
     {
@@ -83,6 +92,15 @@ class Mailgun_Event_Extractor
     {
         error_log('Addresses: ' . count($this->addresses));
         error_log('Duplicates: ' . count($this->duplicates));
+
+        $duplicates_insight = array_filter(
+            array_count_values($this->duplicates), function ($v) {
+                return $v > 1; 
+            }
+        );
+
+        error_log(print_r($duplicates_insight, true));
+
     }
 }
 
