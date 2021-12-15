@@ -1,0 +1,13 @@
+{
+    "name": "mklasen/extracting-events-from-mailgun",
+    "authors": [
+        {
+            "name": "Marinus Klasen",
+            "email": "marinus@mklasen.nl"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.4",
+        "wp-coding-standards/wpcs": "^2.3"
+    }
+}
